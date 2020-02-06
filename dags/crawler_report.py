@@ -3,7 +3,7 @@ import pendulum
 import logging
 from datetime import datetime
 from airflow import DAG
-from airflow.operators.docker_operator import DockerOperator
+from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.operators.python_operator import PythonOperator
 
 local_tz = pendulum.timezone('Asia/Taipei')
@@ -13,33 +13,24 @@ args = {
     'start_date': datetime(2020, 2, 4, tzinfo=local_tz)
 }
 
-dag = DAG(
-    dag_id='crawler_report',
-    default_args=args,
-    schedule_interval='@daily'
-)
-
 
 def show_message(**kwargs):
     """Show message."""
     logging.debug('hello world!')
 
 
-# start_message_task = PythonOperator(
-#     task_id='start_message',
-#     python_callable=show_message,
-#     provide_context=True,
-#     dag=dag,
-#     op_kwargs={'message': 'start crawler report'}
-# )
+with DAG(
+    dag_id='crawler_report', default_args=args, schedule_interval='@daily'
+) as dag:
+    start_message_task = PythonOperator(
+        task_id='start_message',
+        python_callable=show_message,
+        provide_context=True,
+        op_kwargs={'message': 'start crawler report'}
+    )
 
-crawler_test_task = DockerOperator(
-    task_id='crawler_test',
-    image='centos:latest',
-    api_version='auto',
-    auto_remove=True,
-    command="/bin/sleep 30",
-    docker_url="unix:///var/run/docker.sock",
-    network_mode="bridge",
-    dag=dag
-)
+    set_up_bigscrapy_project_task = SSHOperator(
+        ssh_conn_id='ssh_big_ariflow',
+        task_id='set_up_bigscrapy_project',
+        command='echo "hello world" > summary.txt'
+    )
