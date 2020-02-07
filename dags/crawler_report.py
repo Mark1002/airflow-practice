@@ -13,7 +13,9 @@ args = {
 }
 
 with DAG(
-    dag_id='crawler_report', default_args=args, schedule_interval='@daily'
+    dag_id='crawler_report', default_args=args,
+    schedule_interval='@daily', max_active_runs=1,
+    concurrency=1
 ) as dag:
     set_up_bigscrapy_project_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
