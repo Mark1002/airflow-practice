@@ -2,7 +2,7 @@
 import pendulum
 import requests
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.operators.python_operator import PythonOperator
@@ -12,7 +12,9 @@ local_tz = pendulum.timezone('Asia/Taipei')
 
 args = {
     'owner': 'bignet',
-    'start_date': datetime(2020, 2, 6, tzinfo=local_tz)
+    'start_date': datetime(2020, 2, 6, tzinfo=local_tz),
+    'retries': 3,
+    'retry_delay': timedelta(seconds=10),
 }
 
 
@@ -58,7 +60,8 @@ with DAG(
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
-        pipenv run pytest -rf --tb=no > summary.txt'
+        pipenv run pytest -rf --tb=no > summary.txt' && \
+        cat summary.txt && rm -rf cassettes
         """
     )
 
