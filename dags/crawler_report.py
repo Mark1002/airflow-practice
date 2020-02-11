@@ -1,8 +1,9 @@
 """Crawler report dags."""
 import requests
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from airflow import DAG
+from airflow.utils import timezone
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
@@ -10,7 +11,7 @@ from airflow.contrib.hooks.ssh_hook import SSHHook
 
 args = {
     'owner': 'bignet',
-    'start_date': datetime.now() - timedelta(hours=1),
+    'start_date': timezone.utcnow() - timedelta(hours=2),
     'retries': 3,
     'retry_delay': timedelta(seconds=10),
 }
