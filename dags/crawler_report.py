@@ -1,5 +1,4 @@
 """Crawler report dags."""
-import pendulum
 import requests
 
 from datetime import datetime, timedelta
@@ -8,11 +7,10 @@ from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.hooks.ssh_hook import SSHHook
 
-local_tz = pendulum.timezone('Asia/Taipei')
 
 args = {
     'owner': 'bignet',
-    'start_date': datetime(2020, 2, 6, tzinfo=local_tz),
+    'start_date': datetime.now() - timedelta(hours=1),
     'retries': 3,
     'retry_delay': timedelta(seconds=10),
 }
@@ -34,13 +32,13 @@ def get_crawler_report() -> str:
 def send_mattermost():
     """Send report message to mattermost."""
     message = get_crawler_report()
-    webhook_url = 'https://chat.buygta.today/hooks/9cxsx36expb6te66ac6o1qshkc'
+    webhook_url = 'https://chat.buygta.today/hooks/zbr8kctkytnebk76pcrshyysba'
     requests.post(webhook_url, json={'text': message})
 
 
 with DAG(
     dag_id='crawler_report', default_args=args,
-    schedule_interval='@daily', max_active_runs=1,
+    schedule_interval='0 * * * *', max_active_runs=1,
     concurrency=1
 ) as dag:
     set_up_bigscrapy_project_task = SSHOperator(
@@ -60,9 +58,8 @@ with DAG(
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
-        pipenv run pytest -rf --tb=no > summary.txt' && \
-        cat /bigcrawler-scrapy/summary.txt && \
-        rm -rf /bigcrawler-scrapy/tests/cassettes
+        pipenv run pytest -rf --tb=no | tee summary.txt && \
+        rm -rf tests/cassettes'
         """
     )
 
