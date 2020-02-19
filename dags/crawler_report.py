@@ -56,6 +56,7 @@ with DAG(
     run_pytest_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
         task_id='run_pytest',
+        execution_timeout=timedelta(minutes=10),
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
