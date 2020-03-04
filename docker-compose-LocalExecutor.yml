@@ -2,6 +2,7 @@ version: '3.3'
 services:
     postgres:
         image: postgres:9.6
+        restart: always
         environment:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
