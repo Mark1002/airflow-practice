@@ -46,6 +46,7 @@ with DAG(
         ssh_conn_id='ssh_big_airflow',
         task_id='set_up_bigscrapy_project',
         command="""
+        docker pull bigregistry.buygta.today/bigscrapy_projects:latest && \
         [ "$(docker ps --filter name=bigscrapy_projects_airflow -q)" ] && \
         docker rm -f bigscrapy_projects_airflow
         docker run -d --name bigscrapy_projects_airflow \
