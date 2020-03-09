@@ -61,7 +61,7 @@ with DAG(
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
-        pipenv run pytest -rf --tb=no | tee summary.txt && \
+        pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt && \
         rm -rf tests/cassettes'
         """
     )
