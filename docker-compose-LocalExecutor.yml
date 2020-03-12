@@ -23,6 +23,7 @@ services:
             - LOAD_EX=n
             - EXECUTOR=Local
             - FERNET_KEY=${FERNET_KEY}
+            - PROXY=${PROXY}
         logging:
             options:
                 max-size: 10m

@@ -1,4 +1,5 @@
 """Crawler report dags."""
+import os
 import requests
 
 from datetime import timedelta
@@ -45,11 +46,12 @@ with DAG(
     set_up_bigscrapy_project_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
         task_id='set_up_bigscrapy_project',
-        command="""
+        command=f"""
         docker pull bigregistry.buygta.today/bigscrapy_projects:latest && \
         [ "$(docker ps --filter name=bigscrapy_projects_airflow -q)" ] && \
         docker rm -f bigscrapy_projects_airflow
         docker run -d --name bigscrapy_projects_airflow \
+        --env PROXY={os.getenv('PROXY')} \
         bigregistry.buygta.today/bigscrapy_projects
         """
     )
