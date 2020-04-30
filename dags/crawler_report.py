@@ -63,6 +63,9 @@ with DAG(
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
+        git remote set-branches origin develop && \
+        git fetch -v && \
+        git checkout develop && \
         pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt && \
         rm -rf tests/cassettes'
         """
