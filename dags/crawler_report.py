@@ -40,7 +40,7 @@ def send_mattermost():
 
 with DAG(
     dag_id='crawler_report', default_args=args,
-    schedule_interval='0 * * * *', max_active_runs=1,
+    schedule_interval='0 */2 * * *', max_active_runs=1,
     concurrency=1
 ) as dag:
     set_up_bigscrapy_project_task = SSHOperator(
@@ -59,7 +59,7 @@ with DAG(
     run_pytest_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
         task_id='run_pytest',
-        execution_timeout=timedelta(minutes=10),
+        execution_timeout=timedelta(minutes=30),
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
