@@ -12,7 +12,7 @@ from airflow.contrib.hooks.ssh_hook import SSHHook
 
 args = {
     'owner': 'bignet',
-    'start_date': timezone.utcnow() - timedelta(hours=2),
+    'start_date': timezone.utcnow() - timedelta(hours=3),
     'retries': 3,
     'retry_delay': timedelta(seconds=10),
 }
