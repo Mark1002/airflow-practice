@@ -38,6 +38,13 @@ def send_mattermost():
     requests.post(webhook_url, json={'text': message})
 
 
+def send_bigmonitor():
+    """Send report to bigmonitor."""
+    message = get_crawler_report()
+    url = 'http://192.168.1.128:17596/functions/crawler_report'
+    requests.post(url, json={'text': message})
+
+
 with DAG(
     dag_id='crawler_report', default_args=args,
     schedule_interval='0 */2 * * *', max_active_runs=1,
@@ -76,6 +83,11 @@ with DAG(
         python_callable=send_mattermost
     )
 
+    send_bigmonitor_task = PythonOperator(
+        task_id='send_bigmonitor',
+        python_callable=send_bigmonitor
+    )
+
     tear_down_bigscrapy_project_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
         task_id='tear_down_bigscrapy_project',
@@ -85,5 +97,6 @@ with DAG(
     )
 
     set_up_bigscrapy_project_task >> run_pytest_task
-    run_pytest_task >> send_report_task
+    run_pytest_task >> [send_report_task, send_bigmonitor_task]
     send_report_task >> tear_down_bigscrapy_project_task
+    send_bigmonitor_task >> tear_down_bigscrapy_project_task
