@@ -41,7 +41,7 @@ def send_mattermost():
 def send_bigmonitor():
     """Send report to bigmonitor."""
     message = get_crawler_report()
-    url = 'http://192.168.1.128:17596/functions/crawler_report'
+    url = 'http://192.168.1.128:5483/functions/crawler_report'
     requests.post(url, json={'text': message})
 
 
