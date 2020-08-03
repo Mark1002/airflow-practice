@@ -66,15 +66,14 @@ with DAG(
     run_pytest_task = SSHOperator(
         ssh_conn_id='ssh_big_airflow',
         task_id='run_pytest',
-        execution_timeout=timedelta(minutes=30),
+        execution_timeout=timedelta(minutes=60),
         command="""
         docker exec `docker ps  --filter name=bigscrapy_projects_airflow -q` \
         sh -c 'cd /bigcrawler-scrapy && pipenv install --dev && \
         git remote set-branches origin develop && \
         git fetch -v && \
         git checkout develop && \
-        pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt && \
-        rm -rf tests/cassettes'
+        pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt
         """
     )
 
