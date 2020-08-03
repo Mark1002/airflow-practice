@@ -73,7 +73,7 @@ with DAG(
         git remote set-branches origin develop && \
         git fetch -v && \
         git checkout develop && \
-        pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt
+        pipenv run pytest -rf --tb=no --timeout=30 | tee summary.txt'
         """
     )
 
