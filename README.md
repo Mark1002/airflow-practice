@@ -1,6 +1,6 @@
 # BigAirflow
 
-本地端開發:
+## 本地端開發:
 
 1.clone project
 ```
@@ -38,3 +38,15 @@ Password  : ***************
 
 
 5.DAG on
+
+## 正式部署(128)
+```
+git fetch --all
+git pull
+docker-compose -f docker-compose-LocalExecutor.yml down
+docker-compose -f docker-compose-LocalExecutor.yml up -d --build
+```
+＊首次部署需要設定Connections ID：ssh_big_airflow
+
+
+查看網址：http://192.168.1.128:8080/admin/
