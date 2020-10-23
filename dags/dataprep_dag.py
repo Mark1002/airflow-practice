@@ -11,4 +11,8 @@ args = {
 }
 
 with DAG(dag_id='dataprep_dag', default_args=args) as dag:
+    """
+    curl 'https://api.clouddataprep.com/v4/jobGroups/<id>' \
+         -X GET -H 'Authorization: Bearer <token>'
+    """
     pass
