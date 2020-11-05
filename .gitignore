@@ -29,3 +29,7 @@ __pycache__
 # custom
 .vscode
 .envrc
+airflow.cfg
+airflow.db
+logs
+unittests.cfg
